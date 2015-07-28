@@ -79,11 +79,12 @@ class BoundStatementClient(SimpleClient):
     def load_data(self):
         coupon_data = Generator().generate_data()
         #load generated data
+        print("Loading data"+str(datetime.datetime.now()))
         for row in coupon_data:
             self.session.execute(self.prepared_statement,
                 [row[0],row[1],row[2],row[3],row[4],row[5]]
             )
-     
+        print("Finished loading data"+str(datetime.datetime.now()))
 
 
 def main():
