@@ -16,7 +16,7 @@ class Config(object):
 
 #These data generators are used to load data into the data model we've provided. This function returns an array of rows of data.
 class Generator():
-    def generate_data():
+    def generate_data(self):
         results = []
         for i in range(90000,90100):
             for j in range(1,20):
@@ -55,7 +55,7 @@ class SimpleClient(object):
                 data text,
                 liked boolean,
                 clipped boolean,
-                updated timestamp,
+                updated text,
                 PRIMARY KEY((zip),offer_id)
             );
         """)
@@ -64,18 +64,16 @@ class SimpleClient(object):
 
 
 class SimpleStatementClient(SimpleClient):
-'''
-    This class is an example of how to use simple statements. We simply execute with an argument of a string containing the statement.
-'''
+    #This class is an example of how to use simple statements. We simply execute with an argument of a string containing the statement.
+
 
     #Now we actually load the data. Here we use our prepared statement and bind values to it.
-    def load_seed_data(self):
-        coupon_data = Generator.generate_data()
+    def load_data(self):
+        coupon_data = Generator().generate_data()
         #load generated data
         for row in coupon_data:
-            self.session.execute("INSERT INTO loyalty.coupons (zip, offer_id, data, liked, clipped, updated) VALUES (%s,%s,%s,%s,%s);" % ([row[0],row[1],row[2],row[3],row[4],row[5]))
+            self.session.execute("""INSERT INTO loyalty.coupons (zip, offer_id, data, liked, clipped, updated) VALUES (%s,%s,%s,%s,%s,%s);""" % (row[0],row[1],row[2],row[3],row[4],str(row[5])))
      
-
 
 def main():
     logging.basicConfig()
@@ -83,9 +81,7 @@ def main():
     client.connect([Config.cassandra_hosts])
     client.create_schema()
     time.sleep(10)
-    client.prepare_statements()
-    client.load_seed_data()
-    client.run_clips()
+    client.load_data()
     client.close()
 
 if __name__ == "__main__":

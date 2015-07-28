@@ -16,7 +16,7 @@ class Config(object):
 
 #These data generators are used to load data into the data model we've provided. This function returns an array of rows of data.
 class Generator():
-    def generate_data():
+    def generate_data(self):
         results = []
         for i in range(90000,90100):
             for j in range(1,20):
@@ -64,13 +64,11 @@ class SimpleClient(object):
 
 
 class BoundStatementClient(SimpleClient):
-'''
-This class is an example of how to use bound statements. First we create a prepared statement and then we execute it.
-'''
+#This class is an example of how to use bound statements. First we create a prepared statement and then we execute it.
 
     #We first create prepared statements to bind to
     def prepare_statements(self):
-        self.insert_coupon = self.session.prepare(
+        self.prepared_statement = self.session.prepare(
         """
             INSERT INTO loyalty.coupons
             (zip, offer_id, data, liked, clipped, updated)
@@ -78,11 +76,11 @@ This class is an example of how to use bound statements. First we create a prepa
         """)
 
     #Now we actually load the data. Here we use our prepared statement and bind values to it.
-    def load_seed_data(self):
-        coupon_data = Generator.generate_data()
+    def load_data(self):
+        coupon_data = Generator().generate_data()
         #load generated data
         for row in coupon_data:
-            self.session.execute(self.insert_coupon,
+            self.session.execute(self.prepared_statement,
                 [row[0],row[1],row[2],row[3],row[4],row[5]]
             )
      
@@ -95,8 +93,7 @@ def main():
     client.create_schema()
     time.sleep(10)
     client.prepare_statements()
-    client.load_seed_data()
-    client.run_clips()
+    client.load_data()
     client.close()
 
 if __name__ == "__main__":
