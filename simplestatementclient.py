@@ -65,7 +65,7 @@ class SimpleClient(object):
 
 class SimpleStatementClient(SimpleClient):
 '''
-This class is an example of how to use simple statements. We simply execute with an argument of a string containing the statement.
+    This class is an example of how to use simple statements. We simply execute with an argument of a string containing the statement.
 '''
 
     #Now we actually load the data. Here we use our prepared statement and bind values to it.
