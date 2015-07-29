@@ -100,9 +100,12 @@ class AsyncClient(SimpleClient):
         print("Finished loading data"+str(datetime.datetime.now()))
 
     def read_data(self):
+        start_time = datetime.datetime.now()
         for i in range(90000,90100):
             future_results = self.session.execute_async(self.prepared_read_statement,[str(i)])
             future_results.add_callbacks(print_results,print_errors)
+        end_time = datetime.datetime.now()
+        print("Started at"+start_time+" and ended at "+end_time)
 
 def main():
     logging.basicConfig()
@@ -112,6 +115,7 @@ def main():
     time.sleep(10)
     client.prepare_statements()
     client.load_data()
+    client.read_data()
     client.close()
 
 if __name__ == "__main__":
