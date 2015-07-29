@@ -75,7 +75,7 @@ class BoundStatementClient(SimpleClient):
             VALUES (?,?,?,?,?,?);
         """)
 
-        self.prepared_read_statement = self.sesion.prepare(
+        self.prepared_read_statement = self.session.prepare(
         """
             SELECT * FROM loyalty.coupons
                 WHERE zip = ?
@@ -94,7 +94,7 @@ class BoundStatementClient(SimpleClient):
         print("Finished loading data"+str(datetime.datetime.now()))
 
     def read_data(self):
-        for i in range(90000,90100)
+        for i in range(90000,90100):
             results = self.session.execute(self.prepared_read_statement,[str(i)])
             for row in results:
                 print row
