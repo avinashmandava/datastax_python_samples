@@ -63,7 +63,7 @@ class SimpleClient(object):
         log.info('Loyalty keyspace and schema created.')
 
 
-class BoundStatementClient(SimpleClient):
+class AsyncClient(SimpleClient):
 #This class is an example of how to use bound statements. First we create a prepared statement and then we execute it.
 
     #We first create prepared statements to bind to
@@ -88,7 +88,7 @@ class BoundStatementClient(SimpleClient):
 
 def main():
     logging.basicConfig()
-    client = BoundStatementClient()
+    client = AsyncClient()
     client.connect([Config.cassandra_hosts])
     client.create_schema()
     time.sleep(10)

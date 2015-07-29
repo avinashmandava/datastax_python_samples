@@ -9,6 +9,12 @@ import datetime
 log = logging.getLogger()
 log.setLevel('INFO')
 
+def print_errors(errors):
+    log.error(errors)
+
+def print_results(results):
+    for row in results:
+        print row
 
 class Config(object):
     #Set the Cassandra host
@@ -63,17 +69,24 @@ class SimpleClient(object):
         log.info('Loyalty keyspace and schema created.')
 
 
-class BoundStatementClient(SimpleClient):
+class AsyncClient(SimpleClient):
 #This class is an example of how to use bound statements. First we create a prepared statement and then we execute it.
 
     #We first create prepared statements to bind to
     def prepare_statements(self):
-        self.prepared_statement = self.session.prepare(
+        self.prepared_insert_statement = self.session.prepare(
         """
             INSERT INTO loyalty.coupons
             (zip, offer_id, data, liked, clipped, updated)
             VALUES (?,?,?,?,?,?);
         """)
+
+        self.prepared_read_statement = self.session.prepare(
+        """
+            SELECT * FROM loyalty.coupons
+                WHERE zip = ?
+        """)
+
 
     #Now we actually load the data. Here we use our prepared statement and bind values to it.
     def load_data(self):
@@ -81,17 +94,19 @@ class BoundStatementClient(SimpleClient):
         #load generated data
         print("Loading data"+str(datetime.datetime.now()))
         for row in coupon_data:
-            self.session.execute_async(self.prepared_statement,
+            self.session.execute_async(self.prepared_insert_statement,
                 [row[0],row[1],row[2],row[3],row[4],row[5]]
             )
         print("Finished loading data"+str(datetime.datetime.now()))
 
     def read_data(self):
-        
+        for i in range(90000,90100):
+            future_results = self.session.execute_async(self.prepared_read_statement,[str(i)])
+            future_results.add_callbacks(print_results,print_errors)
 
 def main():
     logging.basicConfig()
-    client = BoundStatementClient()
+    client = AsyncClient()
     client.connect([Config.cassandra_hosts])
     client.create_schema()
     time.sleep(10)
