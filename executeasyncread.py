@@ -13,8 +13,7 @@ def print_errors(errors):
     log.error(errors)
 
 def print_results(results):
-    for row in results:
-        print row
+    print results
 
 class Config(object):
     #Set the Cassandra host
@@ -105,7 +104,7 @@ class AsyncClient(SimpleClient):
             future_results = self.session.execute_async(self.prepared_read_statement,[str(i)])
             future_results.add_callbacks(print_results,print_errors)
         end_time = datetime.datetime.now()
-        print("Started at"+str(start_time)+" and ended at "+str(end_time))
+        print("Started reading at at "+str(start_time)+" and stopped reading at "+str(end_time))
 
 def main():
     logging.basicConfig()
