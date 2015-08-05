@@ -84,7 +84,7 @@ class AsyncClient(SimpleClient):
         self.prepared_read_statement = self.session.prepare(
         """
             SELECT * FROM loyalty.coupons
-                WHERE zip = ?
+                WHERE zip = ? ;
         """)
 
 
@@ -104,6 +104,8 @@ class AsyncClient(SimpleClient):
         for i in range(90000,90100):
             future_results = self.session.execute_async(self.prepared_read_statement,[str(i)])
             future_results.add_callbacks(print_results,print_errors)
+            block_future_res = future_results.result()
+            print ("read for key: "+str(i))
         end_time = datetime.datetime.now()
         print("Started reading at at "+str(start_time)+" and stopped reading at "+str(end_time))
 

@@ -94,10 +94,14 @@ class BoundStatementClient(SimpleClient):
         print("Finished loading data"+str(datetime.datetime.now()))
 
     def read_data(self):
+        start_time = datetime.datetime.now()
         for i in range(90000,90100):
             results = self.session.execute(self.prepared_read_statement,[str(i)])
             for row in results:
                 print row
+        end_time = datetime.datetime.now()
+        print("Started reading at at "+str(start_time)+" and stopped reading at "+str(end_time))
+
 
 def main():
     logging.basicConfig()
