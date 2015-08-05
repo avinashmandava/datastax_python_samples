@@ -13,7 +13,8 @@ def print_errors(errors):
     log.error(errors)
 
 def print_results(results):
-    print results
+    for row in results:
+    	print row
 
 class Config(object):
     #Set the Cassandra host
